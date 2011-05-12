@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="sylvester.js"></script>
+    <script type="text/javascript" src="raphael-min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="untitled2.js"></script>
+    <link rel="stylesheet/less" href="style.less" type="text/css" />
+    <script type="text/javascript" src="less.js"></script>
+  </head>
+  <body>
+    <h1 class="test"></h1>
+
+    <p>
+      Here is a 3d object. It is rendered with pure HTML and CSS3
+      using <a href="http://www.w3.org/TR/css3-2d-transforms/">2d
+      transforms</a>. This uses Firefox's custom property
+      <a href="https://developer.mozilla.org/en/CSS/-moz-transform">-moz-transform</a>
+      to beat the triangles into shape.
+    </p>
+
+    <p>
+      To achieve the 3d effect, I project the 3d triangles into 2d
+      screen space using javascript, and then calculate the necessary
+      -moz-transform value to display the 2d triangle.
+    </p>
+
+    <div id="boxes"></div>
+
+    <p>
+      So without any SVG or canvas, you can have real-time 3d objects
+      in modern browsers! What's the benefit? Well, you don't have to
+      deal with a canvas, and you can click on links underneath
+      it. Maybe this is just a cool hack, maybe not?
+    </p>
+
+    <h4>How's it work?</h4>
+
+    <p>
+      A 2d triangle is really a quad, but imagine cutting the quad
+      from two opposite corners and taking only the left
+      triangle. That's essentially what I do, by way of the CSS3 background
+      <a href="http://dev.w3.org/csswg/css3-images/#linear-gradients">linear-gradient</a>
+      property. It aligns the background with two opposite corners and
+      makes one side completely transparent.
+    </p>
+
+    <p>
+      Here's an example.
+
+      <div class="example example1"></div>
+      <div class="clear"></div>
+    </p>
+
+    <p>
+      It turns out that you can render any 2d
+      triangle with the right translate, rotate, skew, and scale
+      settings for the -moz-transform CSS property.
+
+      <div class="example example2">-moz-transform: skew(30deg);</div>
+      <div class="example example3">      -moz-transform: rotate(50deg) skew(-30deg) scale(1.5, .7);</div>
+      <div class="clear"></div>
+    </p>
+
+    <p class="last">
+      So you just have to project all the 3d triangles onto the 2d
+      screen space, and manipulate the DOM triangles to render them
+      according to the 2d coordinates.
+    </p>
+
+    <p>
+      Here is example CSS from a rendered triangle:
+
+      <pre>
+-moz-transform: translate(442.176px, 306.35px) rotate(2.12662rad) skew(2.7961rad) scale(197.767, 180.506);
+background: -moz-linear-gradient(45deg, rgb(87, 111, 121) 50%, transparent 0pt);
+      </pre>
+    </p>
+  </body>
+</html>

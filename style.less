@@ -1,0 +1,62 @@
+
+body {
+    margin: 2em 1em;
+}
+
+body p {
+    width: 50em;
+}
+
+.clear {
+    clear: both;
+}
+
+.box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    background-color: red;
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    -moz-transform-origin: bottom left;
+    overflow: hidden;
+}
+
+#boxes {
+    border: 1px solid red;
+    position: relative;
+}
+
+/* #boxes:before { */
+/*     display: block; */
+/*     width: 100px; */
+/*     height: 100px; */
+/*     position: absolute; */
+/*     top: 0; */
+/*     left: 0; */
+/*     border: 1px solid green; */
+/*     content: ' '; */
+/* } */
+
+.example {
+    float: left;
+    margin-right: 7em;
+    width: 50px;
+    height: 50px;
+    background:
+        -moz-linear-gradient(45deg, #c00 50%, transparent 0);
+}
+
+.example2 {
+    -moz-transform: skew(30deg);
+}
+
+.example3 {
+    -moz-transform: rotate(50deg) skew(-30deg) scale(1.5, .7);
+}
+
+.last {
+    margin-top: 5em;
+}
