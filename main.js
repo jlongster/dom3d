@@ -132,14 +132,7 @@ $(function() {
         var skew = $M([[1, eps(skew_v)],
                        [0, 1]]);
 
-        // var transform =
-        //     'translate(' + translate.e(1) + 'px,' +  translate.e(2) + 'px) ' +
-        //     'rotate(' + rotate + 'rad) ' +
-        //     'skew(' + skew + 'rad)' +
-        //     'scale(' + scale.e(1) + ',' + scale.e(2) + ')';
-
         var final = scale.x(skew.x(rotate));
-        //var final = scale;
         var el = final.elements;
 
         var transform = "matrix(" + 
@@ -152,7 +145,7 @@ $(function() {
           
         var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';          
 
-        $('<div>hello</div>')
+        $('<div></div>')
             .addClass('box')
             .css({ '-moz-transform': transform,
                    '-moz-transform-origin': 'top left',
@@ -220,9 +213,9 @@ $(function() {
 
     width = 600;
     height = 400;
-    var eye = $V([0,0,-30]);
-    var light = $V([-1.0, -1.0, -1.0]).toUnitVector();
-    var frustum = make_frustum(60.0,
+    var eye = $V([0,0,-5]);
+    var light = $V([-1.0, 0.0, 0.0]).toUnitVector();
+    var frustum = make_frustum(90.0,
                                current_width() / current_height(),
                                1.0,
                                1000.0);
@@ -230,52 +223,67 @@ $(function() {
     $('#boxes').css({ 'width': width,
                       'height': height });
     
-    function update(points, dist) {
+    var dist = 0;
+    function get_dist() {
+        return dist;
+    }
+
+    function update(points) {
         function lp(p) {
-            return p.rotate(dist, $L([0,0,0], [1,1,1]));
+            return p.rotate(get_dist(), $L([0,0,0], [0,1,0]));
         }
 
         return [lp(points[0]), lp(points[1]), lp(points[2])];
     }
 
-    // draw_2d_tri([$V([10, 10]),
-    //              $V([0, 100]),
-    //              $V([100, 0])],
-    //             [0, 255, 0]);
-    // draw_2d_tri([$V([100, 50]),
-    //              $V([10, 100]),
-    //              $V([50, 175])],
-    //             [255, 0, 0]);
-                     
-    // for(var i=0; i<50; i++) {
-    //     window.tris.push(
-    //         make_triangle([random_3dvec(20.0, -20.0),
-    //                        random_3dvec(20.0, -20.0),
-    //                        random_3dvec(20.0, -20.0)],
-    //                       random_int(255),
-    //                       random_int(255),
-    //                       random_int(255))
-    //     );
-    // }
-      
-      // window.tris = [
-          // make_triangle([$V([0, 0, 0]),
-          //                     $V([0, 20, 0]),
-          //                     $V([20, 0, 0])],
-          //                    0, 255, 0),
+    var LEFT = 2;
+    var RIGHT = 3;
 
-      //     make_triangle([$V([20, 0, 0]),
-      //                    $V([40, 10, 0]),
-      //                    $V([40, -20, 0])],
-      //                   255, 0, 0),
+    function insert_heap(heap, tri, z) {
+        if(z < heap[1]) {
+            if(!heap[LEFT]) {
+                heap[LEFT] = [tri, z, null, null];
+            }
+            else {
+                insert_heap(heap[LEFT], tri, z);
+            }
+        }
+        else {
+            if(!heap[RIGHT]) {
+                heap[RIGHT] = [tri, z, null, null];
+            }
+            else {
+                insert_heap(heap[RIGHT], tri, z);
+            }
+        }
+    }
 
-      //     make_triangle([$V([40, -20, 0]),
-      //                    $V([-10, 0, 0]),
-      //                    $V([20, 0, 0])],
-      //                   255, 0, 0)
+    function sort(tris) {
+        var heap = [tris[0], null, null];
 
-      // ];
+        for(var i=1; i<tris.length; i++) {
+            var points = tris[i].points;
+            var z = (points[0].e(3) + points[1].e(3) + points[2].e(3)) / 3.0;
+            
+            insert_heap(heap, tris[i], z);
+        }
+        
+        return heap;
+    }
 
+    function render_heap(heap) {
+        if(heap[RIGHT]) {
+            render_heap(heap[RIGHT]);
+        }
+
+        draw_tri(heap[0], eye, light, frustum);
+
+        if(heap[LEFT]) {
+            render_heap(heap[LEFT]);
+        }
+    }
+
+    // tests
     var draw_2d_tri = draw_2d_tri2;
 
     if(draw_2d_tri == draw_2d_tri1)
@@ -288,11 +296,14 @@ $(function() {
         
         if('tris' in window) {
             var tris = window.tris;
-            for(var i=0; i<tris.length; i++){
+            for(var i=0; i<tris.length; i++) {
                 var tri = tris[i];
-                tri.points = update(tri.points, .07);
-                draw_tri(tri, eye, light, frustum);
+                tri.points = update(tri.points);
             }
+
+            var heap = sort(tris);
+            render_heap(heap);
+            delete heap;
         }
         
     }, 30);
@@ -300,4 +311,10 @@ $(function() {
     window.stop = function() {
         clearInterval(timer);
     }
+
+    $(document).mousemove(function(e) {
+        var w = $(document).width();
+        var diff = e.pageX - (w / 2);
+        dist = diff / w;
+    });
 });

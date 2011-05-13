@@ -93,7 +93,8 @@ $(function() {
                            'L' + points[1].e(1) + ' ' + points[1].e(2) +
                            'L' + points[2].e(1) + ' ' + points[2].e(2) +
                            'L' + points[0].e(1) + ' ' + points[0].e(2));
-        p.attr('fill', color);
+        p.attr({ 'fill': color,
+                 'stroke': color });
     }
       
     // utility
@@ -119,7 +120,7 @@ $(function() {
     height = 600;
       
     var paper = Raphael(0, 0, current_width(), current_height());
-    var eye = $V([0,0,-5]);
+    var eye = $V([0,0,-8]);
     var light = $V([-1.0, -1.0, -1.0]).toUnitVector();
     var frustum = make_frustum(60.0,
                                current_width() / current_height(),

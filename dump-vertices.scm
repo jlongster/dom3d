@@ -21,26 +21,20 @@
 (with-output-to-file (string-append name ".js")
   (lambda ()
 
-    (print "var tris = [")
+    (print (string-append "var " name " = ["))
 
     (for-each (lambda (chunk)
                 (let loop ((lst (reverse (obj-chunk-indices chunk))))
                   (if (not (null? lst))
                       (begin
 
-                        (print "make_triangle([")
+                        (print "[")
                         (print-vertex (lookup-vertex obj (car lst)))
                         (print ",")
                         (print-vertex (lookup-vertex obj (cadr lst)))
                         (print ",")
                         (print-vertex (lookup-vertex obj (caddr lst)))
-                        (print "], "
-                               (random-int 255)
-                               ","
-                               (random-int 255)
-                               ","
-                               (random-int 255)
-                               "),\n")
+                        (print "],\n")
 
 
                         (loop (cdddr lst))))))

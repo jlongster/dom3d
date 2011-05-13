@@ -3,14 +3,20 @@
   <head>
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="sylvester.js"></script>
-    <script type="text/javascript" src="raphael-min.js"></script>
-    <script type="text/javascript" src="main.js"></script>
-    <script type="text/javascript" src="untitled2.js"></script>
+    <!-- <script type="text/javascript" src="raphael-min.js"></script> -->
+    <script type="text/javascript" src="dom3d.js"></script>
+    <script type="text/javascript" src="heap.js"></script>
+    <script type="text/javascript" src="moz.js"></script>
+    <script type="text/javascript" src="untitled3.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+
     <link rel="stylesheet/less" href="style.less" type="text/css" />
     <script type="text/javascript" src="less.js"></script>
   </head>
   <body>
     <h1 class="test"></h1>
+
+    <div id="boxes2"></div>
 
     <p>
       Here is a 3d object. It is rendered with pure HTML and CSS3
@@ -24,9 +30,9 @@
       To achieve the 3d effect, I project the 3d triangles into 2d
       screen space using javascript, and then calculate the necessary
       -moz-transform value to display the 2d triangle.
+    <div id="boxes"></div>
     </p>
 
-    <div id="boxes"></div>
 
     <p>
       So without any SVG or canvas, you can have real-time 3d objects
