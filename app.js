@@ -1,51 +1,39 @@
 
+var object = untitled2;
+
 $(function() {
     var last_x;
-    $(document).mousemove(function(e) {
-        var diff = ((last_x || e.pageX) - e.pageX);
-        last_x = e.pageX;
-        frame(diff / 100.0);
-    });
+    var last_y;
+    // $(document).mousemove(function(e) {
+    //     var diff_x = ((last_x || e.pageX) - e.pageX);
+    //     last_x = e.pageX;
 
-    function update_3d_triangle(points, diff) {
-        function lp(p) {
-            return p.rotate(diff, $L([0,0,0], [0,1,0]));
-        }
+    //     var diff_y = ((last_y || e.pageY) - e.pageY);
+    //     last_y = e.pageY;
 
-        return [lp(points[0]), lp(points[1]), lp(points[2])];
-    }
+    //     update(diff_x / 100.0, diff_y / 100.0);
+    //     frame();
+    // });
 
-    function update(data, func) {
-        var len = data.length;
+    function update(diff) {
+        var len = object.length;
         for(var i=0; i<len; i++) {
-            data[i] = func(data[i]);
+            var tri = object[i];
+
+            tri.yaw = diff;
+            tri.pitch = diff;
         }
     }
 
-    update(tris, function(tri) {
-        return update_3d_triangle(tri, Math.PI);
-    });
-
-    function frame(diff) {
-        update(tris, function(tri) {
-            return update_3d_triangle(tri, diff);
-        });
-
-        update(untitled3, function(tri) {
-            return update_3d_triangle(tri, diff);
-        });
-        
+    function frame() {
         dom3d.clear();
-        dom3d.render_object('boxes', tris);
-        dom3d.render_object('boxes2', untitled3);
+        dom3d.render_object('#boxes', object);
     }
 
-
-    dom3d.init('boxes', 600, 400);
-    dom3d.init('boxes2', 600, 400);
-
-    dom3d.current_eye($V([0,0,-5]));
+    dom3d.init('#boxes', 800, 400);
+    dom3d.current_eye($V([7,0,-30]));
     dom3d.current_light($V([-1.0, 0.0, 0.0]).toUnitVector());
+    dom3d.current_color($c(200, 255, 200));
     dom3d.current_frustum(
         dom3d.make_frustum(90.0,
                            dom3d.current_width() / dom3d.current_height(),
@@ -53,6 +41,10 @@ $(function() {
                            1000.0)
     );
 
-    dom3d.current_color($c(0, 255, 100));
-    dom3d.render_object('boxes', tris);
+    var rot = 0.0;
+    setInterval(function() {
+        update(rot);
+        rot += 0.05;
+        frame();
+    }, 50);
 });

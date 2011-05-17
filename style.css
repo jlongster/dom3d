@@ -1,10 +1,30 @@
 
 body {
-    margin: 2em 1em;
+    margin: 0;
 }
 
 body p {
     width: 50em;
+}
+
+.header {
+    background-color: #361a11;
+    color: white;
+    padding: 2em;
+}
+
+.header a,
+.header a:active,
+.header a:visited {
+    display: inline-block;
+    padding: 1em;
+    background-color: #bd5294;
+    color: white;
+    margin-left: 1em;
+}
+
+.content {
+    margin: 1em 2em;
 }
 
 .clear {
@@ -21,13 +41,28 @@ body p {
     background-position: bottom left;
     background-repeat: no-repeat;
     overflow: hidden;
+    image-rendering: -moz-crisp-edges;
+    shape-rendering: crispEdges;
 }
+
+.box.off:nth-of-type(2n) {
+    top: 100px;
+    opacity: 0;
+    -moz-transition: all 2s;
+}
+
+.box.off:nth-of-type(2n + 1) {
+    top: -100px;
+    opacity: 0;
+    -moz-transition: all 3s;
+}
+
 
 #boxes {
     position: fixed;
     top: 0;
     right: 0;
-    margin-top: 100px;
+
 }
 
 #boxes2 {
@@ -53,8 +88,8 @@ body p {
     margin-right: 7em;
     width: 50px;
     height: 50px;
-    background:
-        -moz-linear-gradient(45deg, #c00 50%, transparent 0);
+    background-image:
+       -moz-linear-gradient(-45deg, red 50%, transparent 0);
 }
 
 .example2 {

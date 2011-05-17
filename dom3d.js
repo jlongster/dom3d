@@ -26,7 +26,7 @@ function make_parameter(default_val) {
         if(val)
             _val = val;
         return _val;
-    }
+    };
 }
 
 $(function() {
@@ -62,8 +62,7 @@ $(function() {
             x = (frustum.xmax - x) / (frustum.xmax - frustum.xmin);
             y = (frustum.ymax - y) / (frustum.ymax - frustum.ymin);
 
-            return $V([x * current_width(),
-                       y * current_height()]);
+            return $V([x * current_width(), y * current_height()]);
         }
 
         return [proj(points[0], frustum),
@@ -71,10 +70,64 @@ $(function() {
                 proj(points[2], frustum)];
     }
 
+    // 2d -> 3d projection
+    function project3d(points, z, frustum) {
+        var x = points.e(1) / current_width();
+        x = frustum.xmax - (x * (frustum.xmax - frustum.xmin));
+
+        var y = points.e(2) / current_height();
+        y = frustum.ymax - (y * (frustum.ymax - frustum.ymin));
+
+        return $V([x * z, y * z, z]);
+    }
+
     // rendering
     function clear() {
         $('.box').remove();
     }
+      
+    function transform_points(points) {
+        var pts = [points[0], points[1], points[2]];
+
+        function rotate(p, angle, line) {
+            p[0] = p[0].rotate(angle, line);
+            p[1] = p[1].rotate(angle, line);
+            p[2] = p[2].rotate(angle, line);
+        }
+
+        function scale(p, s) {
+            function scaled(v) {
+                return $V([v.e(1) * s.e(1),
+                           v.e(2) * s.e(2),
+                           v.e(3) * s.e(3)]);
+            }
+
+            p[0] = scaled(p[0]);
+            p[1] = scaled(p[1]);
+            p[2] = scaled(p[2]);
+        }
+
+        if(points.scale) {
+            scale(pts, points.scale);
+        }
+
+        if(points.yaw) {
+            rotate(pts, points.yaw, $L([0,0,0], [1,0,0]));
+        }
+
+        if(points.pitch) {
+            rotate(pts, points.pitch, $L([0,0,0], [0,1,0]));
+        }
+        
+        if(points.translate) {
+            pts[0] = pts[0].add(points.translate);
+            pts[1] = pts[1].add(points.translate);
+            pts[2] = pts[2].add(points.translate);
+        }
+
+        pts.color = points.color;
+        return pts;
+    }      
 
     function render_3d_triangle(canvas, points, eye, light, frustum) {
         var p_eye = [points[0].subtract(eye),
@@ -96,7 +149,7 @@ $(function() {
             points[2].subtract(points[0])
         ).toUnitVector();
 
-        var color = current_color();
+        var color = points.color || current_color();
 
         var angle = normal.dot(light);
         var ambient = .3;
@@ -134,15 +187,16 @@ $(function() {
             'rotate(' + rotate + 'rad) ' +
             'skew(' + skew + 'rad) ' +
             'scale(' + scale.e(1) + ',' + scale.e(2) + ')';
-        
-        var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';          
+
+        var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
 
         $('<div></div>')
             .addClass('box')
             .css({ '-moz-transform': transform,
                    '-moz-transform-origin': 'bottom left',
-                   'background': '-moz-linear-gradient(45deg, ' + color + ' 50%, transparent 0)' })
-            .appendTo('#' + canvas);        
+                   'background': '-moz-linear-gradient(45deg, ' + color + ' 50%, transparent 0)' 
+                 })
+            .appendTo(canvas); 
     }
 
     // utility
@@ -193,18 +247,28 @@ $(function() {
 
     // setup
 
-    function init(id, width, height) {
+    function init(sel, width, height) {
+        var el = $(sel);
+
+        if(width && height) {
+            el.css({ 'width': width,
+                     'height': height });
+        }
+        else {
+            width = el.width();
+            height = el.height();
+        }
+
         current_width(width);
         current_height(height);
-
-        $('#' + id).css({ 'width': width,
-                          'height': height });
     }
 
     // main functions
+      
+      
 
     function render_object(canvas, data) {
-        var heap = sort(data);
+        var heap = sort(data, transform_points, current_eye());
 
         apply_depth_first(heap, function(triangle) {
             render_3d_triangle(canvas, 
@@ -224,6 +288,7 @@ $(function() {
         render_object: render_object,
         clear: clear,
         make_frustum: make_frustum,
+        project3d: project3d,
         current_width: current_width,
         current_height: current_height,
         current_color: current_color,
