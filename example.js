@@ -7,7 +7,7 @@ $(function() {
         dom3d.current_height(w.height());
 
         dom3d.current_frustum(
-            dom3d.make_frustum(75.0,
+            dom3d.make_frustum(60.0,
                                dom3d.current_width() / dom3d.current_height(),
                                1.0,
                                1000.0)

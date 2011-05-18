@@ -10,7 +10,13 @@ var B = 2;
 var A = 3;
 
 function $v(x, y, z, w) {
-    return [x, y, z, w];
+    var buffer = new ArrayBuffer(4*4);
+    var arr = new Float32Array(buffer);
+    arr[X] = x;
+    arr[Y] = y;
+    arr[Z] = z;
+    arr[W] = w;
+    return arr;
 }
 
 function $c(r, g, b, a) {
@@ -23,7 +29,7 @@ function $m() {
 
 function vec_equals(v1, v2) {
     function fleq(x, y) {
-        if(x == undefined && y == undefined)
+        if(isNaN(x) && isNaN(y))
             return true;
 
         return Math.abs(x - y) < .0000000001;
@@ -37,34 +43,34 @@ function vec_equals(v1, v2) {
 
 function vec_subtract(v1, v2) {
     return $v(v1[X] - v2[X],
-              v1[Y] != undefined ? (v1[Y] - v2[Y]) : undefined,
-              v1[Z] != undefined ? (v1[Z] - v2[Z]) : undefined,
-              v1[W] != undefined ? (v1[W] - v2[W]) : undefined);
+              !isNaN(v1[Y]) ? (v1[Y] - v2[Y]) : NaN,
+              !isNaN(v1[Z]) ? (v1[Z] - v2[Z]) : NaN,
+              !isNaN(v1[W]) ? (v1[W] - v2[W]) : NaN);
 }
 
 function vec_multiply(v1, v2) {
     return $v(v1[X] * v2[X],
-              v1[Y] != undefined ? (v1[Y] * v2[Y]) : undefined,
-              v1[Z] != undefined ? (v1[Z] * v2[Z]) : undefined,
-              v1[W] != undefined ? (v1[W] * v2[W]) : undefined);    
+              !isNaN(v1[Y]) ? (v1[Y] * v2[Y]) : NaN,
+              !isNaN(v1[Z]) ? (v1[Z] * v2[Z]) : NaN,
+              !isNaN(v1[W]) ? (v1[W] * v2[W]) : NaN);    
 }
 
 function vec_add(v1, v2) {
     return $v(v1[X] + v2[X],
-              v1[Y] != undefined ? (v1[Y] + v2[Y]) : undefined,
-              v1[Z] != undefined ? (v1[Z] + v2[Z]) : undefined,
-              v1[W] != undefined ? (v1[W] + v2[W]) : undefined);
+              !isNaN(v1[Y]) ? (v1[Y] + v2[Y]) : NaN,
+              !isNaN(v1[Z]) ? (v1[Z] + v2[Z]) : NaN,
+              !isNaN(v1[W]) ? (v1[W] + v2[W]) : NaN);
 }
 
 function vec_dot(v1, v2) {
     return (v1[X] * v2[X] +
-            (v1[Y] != undefined ? v1[Y] * v2[Y] : 0) +
-            (v1[Z] != undefined ? v1[Z] * v2[Z] : 0) +
-            (v1[W] != undefined ? v1[W] * v2[W] : 0));
+            (!isNaN(v1[Y]) ? v1[Y] * v2[Y] : 0) +
+            (!isNaN(v1[Z]) ? v1[Z] * v2[Z] : 0) +
+            (!isNaN(v1[W]) ? v1[W] * v2[W] : 0));
 }
 
 function vec_cross(v1, v2) {
-    if(v1[Z] == undefined)
+    if(isNaN(v1[Z]))
          return;
 
     return $v(v1[Y] * v2[Z] - v1[Z] * v2[Y],
@@ -75,8 +81,8 @@ function vec_cross(v1, v2) {
 function vec_length(v1) {
     return Math.sqrt(v1[X]*v1[X] +
                      v1[Y]*v1[Y] +
-                     (v1[Z] != undefined ? v1[Z]*v1[Z] : 0) +
-                     (v1[W] != undefined ? v1[W]*v1[W] : 0));
+                     (!isNaN(v1[Z]) ? v1[Z]*v1[Z] : 0) +
+                     (!isNaN(v1[W]) ? v1[W]*v1[W] : 0));
 }
 
 function vec_2drotate(v1, angle) {

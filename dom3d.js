@@ -97,6 +97,7 @@ $(function() {
         }
 
         pts.color = points.color;
+        pts.el = points.el;
         return pts;
     }      
 
@@ -129,6 +130,7 @@ $(function() {
 
         render_2d_triangle(
             canvas,
+            points.el,
             project2d(p_eye, frustum),
             $c(Math.floor(color[R] * shade),
                Math.floor(color[G] * shade),
@@ -136,7 +138,7 @@ $(function() {
         );
     }
 
-    function render_2d_triangle(canvas, points, color) {
+    function render_2d_triangle(canvas, el,points, color) {
         if($raphael) {
             var line = 'M' + points[0][X] + ' ' + points[0][Y] +
                 'L' + points[1][X] + ' ' + points[1][Y] +
@@ -174,13 +176,15 @@ $(function() {
 
         var color = 'rgb(' + color[R] + ',' + color[G] + ',' + color[B] + ')';
         
-        $('<div></div>')
-            .addClass('box')
+        el = $('<div></div>');
+        el.addClass('box')
             .css({ '-moz-transform': transform,
                    '-moz-transform-origin': 'bottom left',
                    'background': '-moz-linear-gradient(45deg, ' + color + ' 50%, transparent 0)' 
                  })
-            .appendTo(canvas); 
+            .appendTo(canvas);
+
+        return el;
     }
 
     // utility
