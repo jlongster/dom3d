@@ -7,13 +7,13 @@
 (define obj (obj-load name #f #t))
 
 (define (print-vertex vertex)
-  (print "$V(["
+  (print "$v("
          (car vertex)
          ","
          (cadr vertex)
          ","
          (caddr vertex)
-         "])"))
+         ")"))
 
 (define (random-int upper)
   (inexact->exact (floor (* (random-real) upper))))

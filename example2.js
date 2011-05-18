@@ -8,7 +8,7 @@ $(function() {
         dom3d.current_height(w.height());
 
         dom3d.current_frustum(
-            dom3d.make_frustum(60.0,
+            dom3d.make_frustum(75.0,
                                dom3d.current_width() / dom3d.current_height(),
                                1.0,
                                1000.0)
@@ -16,14 +16,14 @@ $(function() {
     }
 
     resize();
-    dom3d.current_eye($V([0,0,-15]));
-    dom3d.current_light($V([-1.0, 0.0, -.2]).toUnitVector());
+    dom3d.current_eye($v(0,0,-15));
+    dom3d.current_light(vec_unit($v(-1.0, 0.0, -.2)));
     dom3d.current_color($c(200, 255, 200));
     
-    var start = $V([0.0, 0.0, 15.0]);
+    var start = $v(0.0, 0.0, 15.0);
 
     function rotate(p) {
-        return p.rotate(Math.PI, $L([0,0,0], [0,1,0]));
+        return vec_3drotateY(p, Math.PI);
     }
 
     for(var i=0; i<snake.length; i++) {
@@ -32,29 +32,27 @@ $(function() {
     }
 
     function update(x, y) {
-        var target = dom3d.project3d($V([x, y]),
-                                     -dom3d.current_eye().e(3),
+        var target = dom3d.project3d($v(x, y),
+                                     -dom3d.current_eye()[Z],
                                      dom3d.current_frustum());
         
-        var end = $V([target.e(1), target.e(2), 0.0]);
-        var line = end.subtract(start);
+        var end = $v(target[X], target[Y], 0.0);
+        var line = vec_subtract(end, start);
 
-        var pitch = Math.atan2(line.e(1), line.e(3));
-        var yaw = Math.atan2(line.e(2), line.e(3));
+        var pitch = Math.atan2(line[X], line[Z]);
+        var yaw = Math.atan2(line[Y], line[Z]);
+        var scale = vec_length(line);
         
         var len = snake.length;
         for(var i=0; i<len; i++) {
             var tri = snake[i];
             tri.yaw = yaw;
             tri.pitch = pitch;
-            tri.translate = $V([0,0,15]);
+            tri.translate = $v(0,0,15);
 
-            var scale = Math.sqrt(line.e(1)*line.e(1) +
-                                  line.e(2)*line.e(2) +
-                                  line.e(3)*line.e(3));
-            tri.scale = $V([1,1,scale/15.0]);
+            tri.scale = $v(1,1,scale/15.0);
             tri.color = $c(100,
-                           (Math.cos(line.e(2)) + 1.0) / 3.0 * 255,
+                           (Math.cos(line[Y]) + 1.0) / 3.0 * 255,
                            100);
         }
         
@@ -80,10 +78,16 @@ $(function() {
 
     $(document).mousemove(function(e) {
         if(dragging) {
+            var point = $v(e.pageX - ($(window).width() / 2.0),
+                           e.pageY - ($(window).height() / 2.0));
+            var len = vec_length(point);
+            var scale = Math.pow(.997, len) * 2.0;
+
             dragging.css({
                 position: 'relative',
-                left: (e.pageX - anchor.x + prev.x) + 'px',
-                top: (e.pageY - anchor.y + prev.y) + 'px'
+                left: (e.pageX - anchor[X] + prev[X]) + 'px',
+                top: (e.pageY - anchor[Y] + prev[Y]) + 'px',
+
             });
 
             var pos = dragging.position();

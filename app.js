@@ -31,8 +31,8 @@ $(function() {
     }
 
     dom3d.init('#boxes', 800, 400);
-    dom3d.current_eye($V([7,0,-30]));
-    dom3d.current_light($V([-1.0, 0.0, 0.0]).toUnitVector());
+    dom3d.current_eye($v(7,0,-30));
+    dom3d.current_light(vec_unit($v(-1.0, 0.0, 0.0)));
     dom3d.current_color($c(200, 255, 200));
     dom3d.current_frustum(
         dom3d.make_frustum(90.0,

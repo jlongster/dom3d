@@ -1,25 +1,4 @@
 
-function named_vector(elements, names) {
-    var obj = {};
-    var len = elements.length;
-    for(var i=0; i<len; i++) {
-        obj[i] = elements[i];
-        obj[names[i]] = elements[i];
-    }
-    
-    return obj;
-}
-
-function $v() {
-    var els =  Array.prototype.slice.call(arguments);
-    return named_vector(els, ['x', 'y', 'z', 'w']);
-}
-
-function $c() {
-    var els =  Array.prototype.slice.call(arguments);
-    return named_vector(els, ['r', 'g', 'b', 'a']);
-}
-
 function make_parameter(default_val) {
     var _val = default_val;
     return function(val) {
@@ -55,14 +34,13 @@ $(function() {
     // 3d -> 2d projection
     function project2d(points, frustum) {
         function proj(point, frustum) {
-            // x/z and y/z
-            var x = point.e(1) / point.e(3);
-            var y = point.e(2) / point.e(3);
+            var x = point[X] / point[Z];
+            var y = point[Y] / point[Z];
 
             x = (frustum.xmax - x) / (frustum.xmax - frustum.xmin);
             y = (frustum.ymax - y) / (frustum.ymax - frustum.ymin);
 
-            return $V([x * current_width(), y * current_height()]);
+            return $v(x * current_width(), y * current_height());
         }
 
         return [proj(points[0], frustum),
@@ -72,57 +50,50 @@ $(function() {
 
     // 2d -> 3d projection
     function project3d(points, z, frustum) {
-        var x = points.e(1) / current_width();
+        var x = points[X] / current_width();
         x = frustum.xmax - (x * (frustum.xmax - frustum.xmin));
 
-        var y = points.e(2) / current_height();
+        var y = points[Y] / current_height();
         y = frustum.ymax - (y * (frustum.ymax - frustum.ymin));
 
-        return $V([x * z, y * z, z]);
+        return $v(x * z, y * z, z);
     }
 
     // rendering
     function clear() {
-        $('.box').remove();
+        if($raphael) {
+            $raphael.clear();
+        }
+        else {
+            $('.box').remove();
+        }
     }
       
     function transform_points(points) {
         var pts = [points[0], points[1], points[2]];
 
-        function rotate(p, angle, line) {
-            p[0] = p[0].rotate(angle, line);
-            p[1] = p[1].rotate(angle, line);
-            p[2] = p[2].rotate(angle, line);
-        }
-
-        function scale(p, s) {
-            function scaled(v) {
-                return $V([v.e(1) * s.e(1),
-                           v.e(2) * s.e(2),
-                           v.e(3) * s.e(3)]);
-            }
-
-            p[0] = scaled(p[0]);
-            p[1] = scaled(p[1]);
-            p[2] = scaled(p[2]);
-        }
-
         if(points.scale) {
-            scale(pts, points.scale);
+            pts[0] = vec_multiply(pts[0], points.scale);
+            pts[1] = vec_multiply(pts[1], points.scale);
+            pts[2] = vec_multiply(pts[2], points.scale);
         }
 
         if(points.yaw) {
-            rotate(pts, points.yaw, $L([0,0,0], [1,0,0]));
+            pts[0] = vec_3drotateX(pts[0], points.yaw);
+            pts[1] = vec_3drotateX(pts[1], points.yaw);
+            pts[2] = vec_3drotateX(pts[2], points.yaw);
         }
 
         if(points.pitch) {
-            rotate(pts, points.pitch, $L([0,0,0], [0,1,0]));
+            pts[0] = vec_3drotateY(pts[0], points.pitch);
+            pts[1] = vec_3drotateY(pts[1], points.pitch);
+            pts[2] = vec_3drotateY(pts[2], points.pitch);
         }
         
         if(points.translate) {
-            pts[0] = pts[0].add(points.translate);
-            pts[1] = pts[1].add(points.translate);
-            pts[2] = pts[2].add(points.translate);
+            pts[0] = vec_add(pts[0], points.translate);
+            pts[1] = vec_add(pts[1], points.translate);
+            pts[2] = vec_add(pts[2], points.translate);
         }
 
         pts.color = points.color;
@@ -130,28 +101,28 @@ $(function() {
     }      
 
     function render_3d_triangle(canvas, points, eye, light, frustum) {
-        var p_eye = [points[0].subtract(eye),
-                     points[1].subtract(eye),
-                     points[2].subtract(eye)];
+        var p_eye = [vec_subtract(points[0], eye),
+                     vec_subtract(points[1], eye),
+                     vec_subtract(points[2], eye)];
 
-        var tri_ca = p_eye[2].subtract(p_eye[0]);
-        var tri_cb = p_eye[2].subtract(p_eye[1]);
+        var tri_ca = vec_subtract(p_eye[2], p_eye[0]);
+        var tri_cb = vec_subtract(p_eye[2], p_eye[1]);
 
-        var normal_eye = tri_ca.cross(tri_cb);
-        var angle = p_eye[0].dot(normal_eye);
+        var normal_eye = vec_cross(tri_ca, tri_cb);
+        var angle = vec_dot(p_eye[0], normal_eye);
         
         // don't render back faces of triangles
         if(angle >= 0)
             return;
 
         // lighting
-        var normal = points[1].subtract(points[0]).cross(
-            points[2].subtract(points[0])
-        ).toUnitVector();
+        var p_ba = vec_subtract(points[1], points[0]);
+        var p_ca = vec_subtract(points[2], points[0]);
+        var normal = vec_unit(vec_cross(p_ba, p_ca));
 
         var color = points.color || current_color();
 
-        var angle = normal.dot(light);
+        var angle = vec_dot(normal, light);
         var ambient = .3;
         var shade = Math.min(1.0, Math.max(0.0, angle));
         shade = Math.min(1.0, shade + ambient);
@@ -159,37 +130,50 @@ $(function() {
         render_2d_triangle(
             canvas,
             project2d(p_eye, frustum),
-            [Math.floor(color.r * shade),
-             Math.floor(color.g * shade),
-             Math.floor(color.b * shade)]
+            $c(Math.floor(color[R] * shade),
+               Math.floor(color[G] * shade),
+               Math.floor(color[B] * shade))
         );
     }
 
     function render_2d_triangle(canvas, points, color) {
-        var ab = points[1].subtract(points[0]);
-        var ac = points[2].subtract(points[0]);
+        if($raphael) {
+            var line = 'M' + points[0][X] + ' ' + points[0][Y] +
+                'L' + points[1][X] + ' ' + points[1][Y] +
+                'L' + points[2][X] + ' ' + points[2][Y] +
+                'L' + points[0][X] + ' ' + points[0][Y]
+            var p = $raphael.path(line);
+
+            var colorstr = 'rgb(' + color[R] + ',' + color[G] + ',' + color[B] + ')';
+            p.attr('stroke', colorstr);
+            p.attr('fill', colorstr);
+            return;
+        }
+
+        var ab = vec_subtract(points[1], points[0]);
+        var ac = vec_subtract(points[2], points[0]);
 
         var translate = points[0];
-        var rotate = Math.atan2(ab.e(2), ab.e(1));
+        var rotate = Math.atan2(ab[Y], ab[X]);
 
         // rotate ac to get it in local coords
-        var ac_ = ac.rotate(-rotate, $V([0,0]));
+        var ac_ = vec_2drotate(ac, -rotate);
 
         // scale to the right size
-        var scale = $V([Math.sqrt(ab.dot(ab)), Math.abs(ac_.e(2))]);
+        var scale = $v(vec_length(ab), Math.abs(ac_[Y]));
 
         // skew based on ac_ (left size of tri), flip the x and y
         // because we want the angle relative to the y-axis
-        var skew = Math.atan2(ac_.e(1), ac_.e(2));
+        var skew = Math.atan2(ac_[X], ac_[Y]);
 
         var transform =
-            'translate(' + translate.e(1) + 'px,' +  translate.e(2) + 'px) ' +
+            'translate(' + translate[X] + 'px,' +  translate[Y] + 'px) ' +
             'rotate(' + rotate + 'rad) ' +
             'skew(' + skew + 'rad) ' +
-            'scale(' + scale.e(1) + ',' + scale.e(2) + ')';
+            'scale(' + scale[X] + ',' + scale[Y] + ')';
 
-        var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
-
+        var color = 'rgb(' + color[R] + ',' + color[G] + ',' + color[B] + ')';
+        
         $('<div></div>')
             .addClass('box')
             .css({ '-moz-transform': transform,
@@ -210,14 +194,6 @@ $(function() {
 
     function random_real(upper) {
         return Math.random() * upper;
-    }
-
-    function random_3d_vector(upper, lower) {
-        lower = lower || 0;
-        upper = upper - lower;
-        return $V([random_real(upper) + lower,
-                   random_real(upper) + lower,
-                   0.0]);
     }
 
     function with_interval(interval, func) {
@@ -247,6 +223,8 @@ $(function() {
 
     // setup
 
+    var $raphael = null;
+
     function init(sel, width, height) {
         var el = $(sel);
 
@@ -261,6 +239,18 @@ $(function() {
 
         current_width(width);
         current_height(height);
+    }
+
+    function raphael(width, height) {
+        if($raphael) {
+            $raphael.setSize(width, height);
+        }
+        else {
+            $raphael = Raphael(0, 0, width, height);
+        }
+
+        current_width(width);
+        current_height(height);        
     }
 
     // main functions
@@ -285,6 +275,7 @@ $(function() {
 
     window.dom3d = {
         init: init,
+        raphael: raphael,
         render_object: render_object,
         clear: clear,
         make_frustum: make_frustum,

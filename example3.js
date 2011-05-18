@@ -16,14 +16,14 @@ $(function() {
     }
 
     resize();
-    dom3d.current_eye($V([0,0,-14]));
-    dom3d.current_light($V([-1.0, 0.0, -.2]).toUnitVector());
+    dom3d.current_eye($v(0,0,-14));
+    dom3d.current_light(vec_unit($v(-1.0, 0.0, -.2)));
     dom3d.current_color($c(200, 255, 200));
     
-    var start = $V([0.0, 0.0, 15.0]);
+    var start = $v(0.0, 0.0, 15.0);
 
     function rotate(p) {
-        return p.rotate(Math.PI, $L([0,0,0], [1,0,0]));
+        return vec_3drotateX(p, Math.PI);
     }
 
     for(var i=0; i<teapot.length; i++) {

@@ -20,6 +20,9 @@ li {
 }
 
 li:hover {
-    -moz-transform: scale(1.5, 1.5);
     -moz-transition: -moz-transform .5s;
+}
+
+svg {
+    margin-top: 150px;
 }

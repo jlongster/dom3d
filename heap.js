@@ -23,7 +23,7 @@ function insert_heap(heap, tri, z) {
 
 function sort(triangles, transform, eye) {
     function e(z) {
-        return z - eye.e(3);
+        return z - eye[Z];
     }
 
     var heap = [transform(triangles[0]), null, null];
@@ -31,9 +31,9 @@ function sort(triangles, transform, eye) {
     var len = triangles.length;
     for(var i=1; i<len; i++) {
         var tri = transform(triangles[i]);
-        var z = (e(tri[0].e(3)) + 
-                 e(tri[1].e(3)) + 
-                 e(tri[2].e(3))) / 3.0;
+        var z = (e(tri[0][Z]) + 
+                 e(tri[1][Z]) + 
+                 e(tri[2][Z])) / 3.0;
         
         insert_heap(heap, tri, z);
     }

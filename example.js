@@ -1,14 +1,13 @@
 
 
 $(function() {
-
     function resize() {
         var w = $(this);
         dom3d.current_width(w.width());
         dom3d.current_height(w.height());
 
         dom3d.current_frustum(
-            dom3d.make_frustum(60.0,
+            dom3d.make_frustum(75.0,
                                dom3d.current_width() / dom3d.current_height(),
                                1.0,
                                1000.0)
@@ -16,21 +15,14 @@ $(function() {
     }
 
     resize();
-
-    dom3d.current_eye($V([0,0,-15]));
-    dom3d.current_light($V([-1.0, 0.0, -.2]).toUnitVector());
-    dom3d.current_frustum(
-        dom3d.make_frustum(60.0,
-                           dom3d.current_width() / dom3d.current_height(),
-                           1.0,
-                           1000.0)
-    );
+    dom3d.current_eye($v(0,0,-15));
+    dom3d.current_light(vec_unit($v(-1.0, 0.0, -.2)));
     dom3d.current_color($c(200, 255, 200));
     
-    var start = $V([0.0, 0.0, 15.0]);
+    var start = $v(0.0, 0.0, 15.0);
 
     function rotate(p) {
-        return p.rotate(Math.PI, $L([0,0,0], [0,1,0]));
+        return vec_3drotateY(p, Math.PI);
     }
 
     for(var i=0; i<snake.length; i++) {
@@ -39,18 +31,19 @@ $(function() {
     }
 
     function update(x, y) {
-        var pitch, yaw, line;
+        var pitch, yaw, line, scale;
 
         if(x && y) {
-            var target = dom3d.project3d($V([x, y]),
-                                         -dom3d.current_eye().e(3),
+            var target = dom3d.project3d($v(x, y),
+                                         -dom3d.current_eye()[Z],
                                          dom3d.current_frustum());
             
-            var end = $V([target.e(1), target.e(2), 0.0]);
-            var line = end.subtract(start);
+            var end = $v(target[X], target[Y], 0.0);
+            var line = vec_subtract(end, start);
 
-            pitch = Math.atan2(line.e(1), line.e(3));
-            yaw = Math.atan2(line.e(2), line.e(3));
+            pitch = Math.atan2(line[X], line[Z]);
+            yaw = Math.atan2(line[Y], line[Z]);
+            scale = vec_length(line);
         }
         else {
             pitch = 0;
@@ -62,21 +55,16 @@ $(function() {
             var tri = snake[i];
             tri.yaw = yaw;
             tri.pitch = pitch;
-            tri.translate = $V([0,0,15]);
-
-            console.debug(tri.yaw);
+            tri.translate = $v(0,0,15);
             
             if(line) {
-                var scale = Math.sqrt(line.e(1)*line.e(1) +
-                                      line.e(2)*line.e(2) +
-                                      line.e(3)*line.e(3));
-                tri.scale = $V([1,1,scale/15.0]);
+                tri.scale = $v(1,1,scale/15.0);
                 tri.color = $c(100,
-                               (Math.cos(line.e(2)) + 1.0) / 3.0 * 255,
+                               (Math.cos(line[Y]) + 1.0) / 3.0 * 255,
                                100);
             }
             else {
-                tri.scale = $V([1,1,1]);
+                tri.scale = $v(1,1,1);
             }
         }
         
@@ -90,8 +78,6 @@ $(function() {
     
     $(document).mousemove(function(e) {
         var header = $('.header')[0];
-
-
 
         if(e.pageX < header.offsetWidth && e.pageY < header.offsetHeight) {
             frame(update());
