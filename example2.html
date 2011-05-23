@@ -4,22 +4,34 @@
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="vector.js"></script>
     <script type="text/javascript" src="dom3d.js"></script>
+
+    <script type="text/javascript" src="renderer.js"></script>
+    <script type="text/javascript" src="raphael-min.js"></script>
+    <script type="text/javascript" src="renderer_css.js"></script>
+    <script type="text/javascript" src="renderer_raphael.js"></script>
+
     <script type="text/javascript" src="heap.js"></script>
+    <script type="text/javascript" src="std.js"></script>
     <script type="text/javascript" src="example2.js"></script>
     <script type="text/javascript" src="snake.js"></script>
 
     <link rel="stylesheet" href="style.css" type="text/css" />
     <link rel="stylesheet" href="example.css" type="text/css" />
   </head>
-  <body>
+  <body id="canvas">
     <div class="header">
       Other examples:
 
       <a href="index.html">main</a>
       <a href="example.html">pole</a>
       <a href="example2.html">dragging</a>
-      <a href="teapot.html">teapot</a>
+      <a href="example3.html">teapot</a>
       <a href="example4.html">404</a>
+
+      <div class="render-options">
+        <a id="css" href="#css">CSS</a>
+        <a id="raphael" href="#raphael">SVG/Raphael</a>
+      </div>
     </div>
     
     <ul>

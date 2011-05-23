@@ -30,85 +30,17 @@
 
         return $v(x * z, y * z, z);
     }
-
-    function clear() {
-        if($raphael) {
-            $raphael.clear();
-        }
-        else {
-            $('.box').remove();
-        }
-    }
-
-    function _transform_points(mesh, points) {
-        var p = [vec_copy(points[0]), vec_copy(points[1]), vec_copy(points[2])];
-
-        if(mesh.scale) {
-            _tri_apply(p, function(v) {
-                _vec_multiply(v, mesh.scale);
-            })
-        }
-
-        if(mesh.yaw) {
-            _tri_apply(p, function(v) {
-                _vec_3drotateX(v, mesh.yaw);
-            });            
-        }
-
-        if(mesh.pitch) {
-            _tri_apply(p, function(v) {
-                _vec_3drotateY(v, mesh.pitch);
-            });
-        }
-        
-        if(mesh.translate) {
-            _tri_apply(p, function(v) {
-                _vec_add(v, mesh.translate);
-            });
-        }
-
-        return p;
-    }
-
-    function _tri_apply(tri, transform) {
-        transform(tri[0]);
-        transform(tri[1]);
-        transform(tri[2]);
-    }
      
     function test(canvas) {
-        dom3d.current_renderer()
-            .render2d(canvas,
+        self.render2d(canvas,
                       [$v(0, 0), $v(100, 100), $v(100, 0)],
                       $c(0, 255, 0));
+
+        self.render2d(canvas,
+                      [$v(50, 200), $v(50, 250), $v(100, 225)],
+                      $c(0, 0, 255));
     }
 
-    function render(canvas, mesh) {
-        var eye = dom3d.current_eye();
-        var data = mesh.data;
-        var len = data.length;
-
-        var heap = make_heap();
-
-        for(var i=0; i<len; i++) {
-            var tri = _transform_points(mesh, data[i]);
-
-            _tri_apply(tri, function(v) {
-                _vec_subtract(v, eye);
-            });
-
-            heap_add(heap, tri);
-        }
-        
-        heap_depth_first(heap, function(triangle) {
-            render3d(canvas, 
-                     triangle,
-                     dom3d.current_eye(),
-                     dom3d.current_light(),
-                     dom3d.current_frustum());
-        });
-    }
-    
     // default 3d rendering function projects points into 2d space in
     // software and uses render2d to render them
     function render3d(canvas, points, eye, light, frustum) {
@@ -124,6 +56,7 @@
         
         // don't render back faces of triangles
         if(angle >= 0) {
+            this.remove && this.remove(points);
             return;
         }
 
@@ -139,36 +72,43 @@
         var shade = Math.min(1.0, Math.max(0.0, angle));
         shade = Math.min(1.0, shade + ambient);
 
-        dom3d.current_renderer().render2d(
+        var points2d = this.project2d(p_eye, frustum);
+        points2d.ref = points.ref;
+
+        this.render2d(
             canvas,
-            project2d(p_eye, frustum),
+            points2d,
             $c(Math.floor(color[R] * shade),
                Math.floor(color[G] * shade),
                Math.floor(color[B] * shade))
-        );
+        )
     }
 
     function render2d(canvas, point, color) {
     }
 
-    function extend(obj) {
-        for(var i in renderer) {
-            if(obj[i] == undefined) {
-                obj[i] = renderer[i];
-            }
-        }
-        
-        return obj;
+    function clear(canvas) {
     }
 
-    window.renderer = {
+    function init() {
+    }
+
+    function destroy() {
+    }
+
+    function Renderer() {
+    };
+
+    Renderer.prototype = {
+        init: init,
+        clear: clear,
+        destroy: destroy,
         project2d: project2d,
         project3d: project3d,
-        clear: clear,
-        render: render,
+        render3d: render3d,
         render2d: render2d,
-        extend: extend,
         test: test
     }
 
+    window.Renderer = Renderer;
 })();

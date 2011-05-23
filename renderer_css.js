@@ -1,75 +1,169 @@
 
-
 (function() {
 
-    var $raphael = null;
+    var zIndex = 0;
+
+    // settings
+
+    var _use_matrix = false;
+    function use_matrix(flag) {
+        _use_matrix = (flag == undefined ? true : flag);
+    }
+
+    var _use_refs = false;
+    function use_refs(flag) {
+        _use_refs = (flag == undefined ? true : flag);
+    }
+
+    // util
+
+    function e(v) {
+        // sometimes scientific notation kicks in with really small
+        // numbers, which can't give to CSS, so round them to 0. if
+        // there's a js method to print floats without SF to a certain
+        // precision we should use it (toPrecision() still uses SF)
+        if(v < .000001 && v > -.000001)
+            return 0.0;
+        return v;
+    }
+
+    // refs are references to a dom node instance
+
+    function make_ref(canvas, force) {
+        if(_use_refs || force) {
+            var node = document.createElement('div'); 
+            node.className = '_dom3d';
+            document.getElementById(canvas).appendChild(node);
+            return node;
+        }
+        return null;
+    }
+
+    // render api
+
+    function clear(canvas, cleanup) {
+        zIndex = 0;
+
+        var cleanup = cleanup || !_use_refs;
+        var container = document.getElementById(canvas);
+        var len = container.childNodes.length;
+
+        // Make sure to pass `cleanup` if you will be creating new
+        // points each frame and thus new dom nodes
+        if(cleanup) {
+            var i = 0;
+            while(container.childNodes.length > i) {
+                var node = container.childNodes[i];
+                if(node.className == '_dom3d') {
+                    container.removeChild(node);
+                }
+                else {
+                    i++;
+                }
+            }
+        }
+        else {
+            for(var i=0; i<len; i++) {
+                var node = container.childNodes[i];
+                if(node.className == '_dom3d') {
+                    node.style.display = 'none';
+                }
+            }
+        }
+    }
+
+    function remove(tri) {
+        tri.ref && (tri.ref.style.display = 'none');
+    }
 
     function render2d(canvas, points, color) {
-        if($raphael) {
-            var line = 'M' + points[0][X] + ' ' + points[0][Y] +
-                'L' + points[1][X] + ' ' + points[1][Y] +
-                'L' + points[2][X] + ' ' + points[2][Y] +
-                'L' + points[0][X] + ' ' + points[0][Y]
-            var p = $raphael.path(line);
-
-            var colorstr = 'rgb(' + color[R] + ',' + color[G] + ',' + color[B] + ')';
-            p.attr('stroke', colorstr);
-            p.attr('fill', colorstr);
-            return;
-        }
-
         var ab = vec_subtract(points[1], points[0]);
         var ac = vec_subtract(points[2], points[0]);
 
         var translate = points[0];
-        var rotate = Math.atan2(ab[Y], ab[X]);
+        var rotate = Math.atan2(ab[X], ab[Y]);
 
         // rotate ac to get it in local coords
-        var ac_ = vec_2drotate(ac, -rotate);
+        var ac_ = vec_2drotate(ac, rotate);
 
         // scale to the right size
-        var scale = $v(vec_length(ab), Math.abs(ac_[Y]));
+        var scale = $v(ac_[X], vec_length(ab));
 
         // skew based on ac_ (left size of tri), flip the x and y
         // because we want the angle relative to the y-axis
-        var skew = Math.atan2(ac_[X], ac_[Y]);
-        
+        var skew = Math.atan2(ac_[Y], ac_[X]);
        
-        var transform =
-            'translate(' + translate[X] + 'px,' +  translate[Y] + 'px) ' +
-            'rotate(' + rotate + 'rad) ' +
-            'skew(' + skew + 'rad) ' + 
-            'scale(' + scale[X] + ',' + scale[Y] + ')';
-        
+        var transform;
+
+        if(_use_matrix) {
+            var cos_a = Math.cos(rotate);
+            var sin_a = Math.sin(rotate);
+            var rotate_m = $m([cos_a, -sin_a],
+                              [sin_a, cos_a]);
+            var skew_m = $m([1, Math.tan(skew)],
+                            [0, 1]);
+
+            var els = matrix_x(skew_m, rotate_m);
+            
+            transform = "matrix(" + 
+                e(els[0][0]) + ',' +
+                e(els[0][1]) + ',' +
+                e(els[1][0]) + ',' +
+                e(els[1][1]) + ',' +
+                translate[X] + 'px,' +
+                translate[Y] + 'px)';
+        }
+        else {
+            transform = 
+                'translate(' + translate[X] + 'px,' + 
+                               translate[Y] + 'px) ' +
+                'rotate(' + -e(rotate) + 'rad) ' +
+                'skewY(' + e(skew) + 'rad) ';
+        }
+         
         var bg_angle = Math.atan2(scale[X], scale[Y]);
 
-        $('<div></div>')
-            .addClass('box')
-            .css({ 'display': 'block',
-                   // 'width': scale[X],
-                   // 'height': scale[Y],
-                   '-moz-transform': transform,
-                   '-moz-transform-origin': 'bottom left',
-                   '-webkit-transform': transform,
-                   '-webkit-transform-origin': 'top left',
-                   'background': get_background(color, Math.PI/4)
-                 })
-            .appendTo(canvas);
+        // Create a node if we don't have one yet, which would be if
+        // these points didn't come from projected 3d points
+        points.ref = points.ref || make_ref(canvas, true);
+
+        var el = points.ref;
+        el.style.display = 'block';
+        el.style.width = scale[X] + 'px';
+        el.style.height = scale[Y] + 'px';
+        el.style.MozTransform = transform;
+        el.style.MozTransformOrigin = 'top left';
+        el.style.background = get_background(color, -bg_angle);
+        el.style.zIndex = zIndex;
+
+        zIndex++;
     }
 
     var _chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
     function get_background(color, angle) {
-        var color = 'rgb(' + color[R] + ',' + color[G] + ',' + color[B] + ')';
+        var color = 'rgb(' + 
+            color[R].toFixed() + ',' +
+            color[G].toFixed() + ',' + 
+            color[B].toFixed() + ')';
         
         if(_chrome) {
             return '-webkit-linear-gradient(45deg, transparent 50%, ' + color + ' 0)';
         }
         else {
-            return '-moz-linear-gradient(' + angle + 'rad, ' + color + ' 50%, transparent 0)';
+            return '-moz-linear-gradient(' + e(angle) + 'rad, ' + color + ' 50%, transparent 0)';
         }
     }
 
-    window.renderer_css = renderer.extend({
-        render2d: render2d
-    });
+    function RendererCSS() {
+        this.render2d = render2d;
+        this.remove = remove;
+        this.make_ref = make_ref;
+        this.use_refs = use_refs;
+        this.use_matrix = use_matrix;
+        this.clear = clear;
+        this.type = 'css';
+    };
+
+    RendererCSS.prototype = Renderer.prototype;
+    window.RendererCSS = RendererCSS;
 })();

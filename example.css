@@ -23,6 +23,18 @@ li:hover {
     -moz-transition: -moz-transform .5s;
 }
 
-svg {
-    margin-top: 150px;
+.render-options {
+    float: right;
+}
+
+.render-options a,
+.render-options a:visited {
+    display: inline-block;
+    padding: 1em;
+    color: white;
+    border: 1px solid #bd5294;
+}
+
+.render-options a:target {
+    background-color: #bd5294;
 }

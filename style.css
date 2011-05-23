@@ -31,7 +31,7 @@ body p {
     clear: both;
 }
 
-.box {
+._dom3d {
     position: absolute;
     top: 0;
     left: 0;
@@ -60,7 +60,8 @@ body p {
     position: fixed;
     top: 100px;
     right: 0;
-    border: 1px solid red;
+    width: 800px;
+    height: 400px;
 }
 
 #boxes2 {
