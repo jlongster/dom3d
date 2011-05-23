@@ -41,8 +41,6 @@ body p {
     background-position: bottom left;
     background-repeat: no-repeat;
     overflow: hidden;
-    image-rendering: -moz-crisp-edges;
-    shape-rendering: crispEdges;
 }
 
 .box.off:nth-of-type(2n) {
@@ -60,9 +58,9 @@ body p {
 
 #boxes {
     position: fixed;
-    top: 0;
+    top: 100px;
     right: 0;
-
+    border: 1px solid red;
 }
 
 #boxes2 {
@@ -97,7 +95,8 @@ body p {
 }
 
 .example3 {
-    -moz-transform: rotate(50deg) skew(-30deg) scale(1.5, .7);
+    -moz-transform: rotate(.78rad);
+    -moz-transform-origin: bottom left;
 }
 
 .last {

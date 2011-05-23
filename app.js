@@ -1,7 +1,8 @@
 
-var object = untitled2;
-
 $(function() {
+      
+    var object = untitled2;      
+
     var last_x;
     var last_y;
     // $(document).mousemove(function(e) {
@@ -16,22 +17,21 @@ $(function() {
     // });
 
     function update(diff) {
-        var len = object.length;
-        for(var i=0; i<len; i++) {
-            var tri = object[i];
-
-            tri.yaw = diff;
-            tri.pitch = diff;
-        }
+        object.yaw = diff;
+        object.pitch = diff;
     }
 
     function frame() {
-        dom3d.clear();
-        dom3d.render_object('#boxes', object);
+        dom3d.current_renderer().clear();
+        dom3d.current_renderer().render('#boxes', object);
+    }
+
+    function test() {
+        dom3d.current_renderer().test('#boxes');
     }
 
     dom3d.init('#boxes', 800, 400);
-    dom3d.current_eye($v(7,0,-30));
+    dom3d.current_eye($v(0,0,-15));
     dom3d.current_light(vec_unit($v(-1.0, 0.0, 0.0)));
     dom3d.current_color($c(200, 255, 200));
     dom3d.current_frustum(
@@ -40,11 +40,15 @@ $(function() {
                            1.0,
                            1000.0)
     );
+    dom3d.current_renderer(renderer_css);
+      
+    test();
+    // frame();   
 
-    var rot = 0.0;
-    setInterval(function() {
-        update(rot);
-        rot += 0.05;
-        frame();
-    }, 50);
+    // var rot = 0.0;
+    // setInterval(function() {
+    //     update(rot);
+    //     rot += 0.05;
+    //     frame();
+    // }, 50);
 });

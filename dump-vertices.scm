@@ -21,7 +21,7 @@
 (with-output-to-file (string-append name ".js")
   (lambda ()
 
-    (print (string-append "var " name " = ["))
+    (print (string-append "var " name " = dom3d.make_mesh(["))
 
     (for-each (lambda (chunk)
                 (let loop ((lst (reverse (obj-chunk-indices chunk))))
@@ -40,5 +40,5 @@
                         (loop (cdddr lst))))))
               (obj-chunks obj))
 
-    (print "]")))
+    (print "]);")))
 
