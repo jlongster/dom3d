@@ -24,6 +24,8 @@ $(function() {
         }
     }
 
+    var timer;
+
     function bind_controls() {
         var c = $('#controls');
         c.find('input[name=border]').click(function() {
@@ -56,6 +58,26 @@ $(function() {
                 c.find('.off-code').hide();
             }
         });
+
+        c.find('input[name=stop]').click(function() {
+            if(this.checked) {
+                clearInterval(timer);
+                timer = null;
+            }
+            else if(!timer) {
+                timer = start_loop();
+            }
+        });
+    }
+
+    var rot = 0.0;
+
+    function start_loop() {
+        return setInterval(function() {
+            update(rot);
+            rot += 0.05;
+            frame();
+        }, 50);
     }
 
     make_renderer('canvas');
@@ -66,12 +88,7 @@ $(function() {
     // dom3d.current_renderer().use_matrix();
     // dom3d.current_renderer().use_refs();
 
-    var rot = 0.0;
-    setInterval(function() {
-        update(rot);
-        rot += 0.05;
-        frame();
-    }, 50);
+    timer = start_loop();
 
     bind_controls();
     update_controls();
