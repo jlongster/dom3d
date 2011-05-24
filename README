@@ -7,3 +7,4 @@ dom3d.js is where the API is exposed and interfaces between the use and the rend
 renderer.js is where the base renderer is defined.
 renderer_css.js is the CSS renderer.
 renderer_raphael.js is the Raphael/SVG renderer.
+dump-vertices.scm is a Scheme script to parse a .obj model into a javascript mesh that dom3d can load.
