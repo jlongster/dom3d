@@ -1,9 +1,9 @@
 
 $(function() {
 
-    function init() {
+    function init(width, height) {
         var w = $(this);
-        dom3d.init(w.width(), w.height());
+        dom3d.init(width || w.width(), height || w.height());
 
         dom3d.current_frustum(
             dom3d.make_frustum(60.0,
@@ -13,7 +13,7 @@ $(function() {
         );
     }
 
-    function make_renderer() {
+    function make_renderer(width, height) {
         var type = (window.location.hash ? 
                     window.location.hash.substring(1) :
                     'css');
@@ -30,7 +30,14 @@ $(function() {
             dom3d.current_renderer(new RendererCSS());
         }
 
-        init();
+        $('.render-options a').each(function() {
+            var _this = $(this);
+            if(_this.attr('href') == '#' + type) {
+                _this.addClass('selected');
+            }
+        });
+
+        init(width, height);
         return dom3d.current_renderer();
     };
    
@@ -53,13 +60,22 @@ $(function() {
         return offset;
     }
  
-    $(window).resize(function() {
-        init();
+    $('.render-options a').click(function() {
+        $('.render-options a').removeClass('selected');
+        $(this).addClass('selected');
     });
 
-    window.onpopstate = make_renderer;
+    function install_resize() {
+        $(window).resize(function() {
+            init();
+        });
+    }
 
-    make_renderer();
+    window.onpopstate = function() {
+        make_renderer(dom3d.current_width(), dom3d.current_height());
+    }
 
+    window.make_renderer = make_renderer;
+    window.install_resize = install_resize;
     window.fix_canvas = fix_canvas;
 });

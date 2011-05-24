@@ -1,24 +1,23 @@
 
 $(function() {
       
-    var object = untitled2;      
-
     function update(diff) {
-        object.yaw = diff;
-        object.pitch = diff;
+        untitled2.yaw = diff;
+        untitled2.pitch = diff;
     }
 
     function frame() {
-        dom3d.clear('boxes');
-        dom3d.render('boxes', object);
+        dom3d.clear('canvas');
+        dom3d.render('canvas', untitled2);
     }
 
     function test() {
-        dom3d.current_renderer().test('boxes');
+        dom3d.current_renderer().test('canvas');
     }
+    
+    var canvas = $('#canvas');
+    make_renderer(canvas.width(), canvas.height());
 
-    dom3d.current_renderer(new RendererCSS());
-    dom3d.init('boxes');
     dom3d.current_eye($v(0,0,-15));
     dom3d.current_light(vec_unit($v(-1.0, 0.0, 0.0)));
     dom3d.current_color($c(200, 255, 200));

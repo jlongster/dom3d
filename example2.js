@@ -4,6 +4,8 @@ $(function() {
     var offset = $v(0, 0);
     var header = $('.header');
 
+    make_renderer();
+
     dom3d.current_eye($v(0,0,-15));
     dom3d.current_light(vec_unit($v(-1.0, .5, -.2)));
     dom3d.current_color($c(200, 255, 200));
@@ -94,5 +96,6 @@ $(function() {
         frame(snake);
     });
 
+    install_resize();
     frame(snake);
 })

@@ -3,17 +3,21 @@
   <head>
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="vector.js"></script>
-    <!-- <script type="text/javascript" src="raphael-min.js"></script> -->
     <script type="text/javascript" src="dom3d.js"></script>
+
     <script type="text/javascript" src="renderer.js"></script>
+    <script type="text/javascript" src="raphael-min.js"></script>
     <script type="text/javascript" src="renderer_css.js"></script>
+    <script type="text/javascript" src="renderer_raphael.js"></script>
+
     <script type="text/javascript" src="heap.js"></script>
+    <script type="text/javascript" src="std.js"></script>
     <script type="text/javascript" src="untitled2.js"></script>
-    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="index.js"></script>
 
     <link rel="stylesheet" href="style.css" type="text/css" />
   </head>
-  <body>
+  <body id="main">
     <div class="header">
       Other examples:
 
@@ -22,6 +26,11 @@
       <a href="example2.html">dragging</a>
       <a href="example3.html">teapot</a>
       <a href="example4.html">404</a>
+
+      <div class="render-options">
+        <a href="#css">CSS</a>
+        <a href="#raphael">SVG/Raphael</a>
+      </div>
     </div>
 
     <div class="content">
@@ -40,8 +49,7 @@
         
       </p>
 
-      <div id="boxes"></div>
-
+      <div id="canvas"></div>
 
       <p>
         So without any SVG or canvas, you can have real-time 3d objects

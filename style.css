@@ -43,20 +43,20 @@ body p {
     overflow: hidden;
 }
 
-.box.off:nth-of-type(2n) {
+._dom3d.off:nth-of-type(2n) {
     top: 100px;
     opacity: 0;
     -moz-transition: all 2s;
 }
 
-.box.off:nth-of-type(2n + 1) {
+._dom3d.off:nth-of-type(2n + 1) {
     top: -100px;
     opacity: 0;
     -moz-transition: all 3s;
 }
 
 
-#boxes {
+#main #canvas {
     position: fixed;
     top: 100px;
     right: 0;
@@ -64,7 +64,7 @@ body p {
     height: 400px;
 }
 
-#boxes2 {
+#canvas2 {
     position: fixed;
     top: 0;
     left: 0;
@@ -89,17 +89,39 @@ body p {
     height: 50px;
     background-image:
        -moz-linear-gradient(-45deg, red 50%, transparent 0);
+    background-image:
+       -webkit-linear-gradient(-45deg, red 50%, transparent 0);
 }
 
 .example2 {
     -moz-transform: skew(30deg);
+    -webkit-transform: skew(30deg);
 }
 
 .example3 {
     -moz-transform: rotate(.78rad);
     -moz-transform-origin: bottom left;
+    -webkit-transform: rotate(.78rad);
+    -webkit-transform-origin: bottom left;
 }
 
 .last {
     margin-top: 5em;
+}
+
+.render-options {
+    float: right;
+}
+
+.render-options a,
+.render-options a:visited {
+    display: inline-block;
+    padding: 1em;
+    color: white;
+    border: 1px solid #bd5294;
+    background-color: transparent;
+}
+
+.render-options a.selected {
+    background-color: #bd5294;
 }

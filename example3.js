@@ -2,6 +2,8 @@
 
 $(function() {
 
+    make_renderer();
+
     dom3d.current_eye($v(0,0,-10));
     dom3d.current_light(vec_unit($v(-1.0, 0.0, -.2)));
     dom3d.current_color($c(200, 255, 200));
@@ -39,4 +41,6 @@ $(function() {
     setInterval(function() {
         frame(update());
     }, 50);
+   
+    install_resize();
 })

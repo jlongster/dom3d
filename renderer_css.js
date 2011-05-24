@@ -133,6 +133,8 @@
         el.style.height = scale[Y] + 'px';
         el.style.MozTransform = transform;
         el.style.MozTransformOrigin = 'top left';
+        el.style.WebkitTransform = transform;
+        el.style.WebkitTransformOrigin = 'top left';
         el.style.background = get_background(color, -bg_angle);
         el.style.zIndex = zIndex;
 
@@ -147,7 +149,7 @@
             color[B].toFixed() + ')';
         
         if(_chrome) {
-            return '-webkit-linear-gradient(45deg, transparent 50%, ' + color + ' 0)';
+            return '-webkit-linear-gradient(' + e(angle) + 'rad, ' + color + ' 50%, transparent 0)';
         }
         else {
             return '-moz-linear-gradient(' + e(angle) + 'rad, ' + color + ' 50%, transparent 0)';
