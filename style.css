@@ -56,15 +56,19 @@ body p {
 ._dom3d.off:nth-of-type(2n) {
     top: 100px;
     opacity: 0;
-    -moz-transition: all 2s;
-    -webkit-transition: all 3s;
+    -moz-transition-duration: 3s;
+    -moz-transition-property: top, opacity;
+    -webkit-transition-duration: 3s;
+    -webkit-transition-property: top, opacity;
 }
 
 ._dom3d.off:nth-of-type(2n + 1) {
     top: -100px;
     opacity: 0;
-    -moz-transition: all 3s;
-    -webkit-transition: all 3s;
+    -moz-transition-duration: 3s;
+    -moz-transition-property: top, opacity;
+    -webkit-transition-duration: 3s;
+    -webkit-transition-property: top, opacity;
 }
 
 .off-code {
