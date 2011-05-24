@@ -1,9 +1,9 @@
 
 $(function() {
 
-    function init(width, height) {
-        var w = $(this);
-        dom3d.init(width || w.width(), height || w.height());
+    function init(width_or_canvas, height) {
+        var w = $(window);
+        dom3d.init(width_or_canvas || w.width(), height || w.height());
 
         dom3d.current_frustum(
             dom3d.make_frustum(60.0,
@@ -13,7 +13,11 @@ $(function() {
         );
     }
 
-    function make_renderer(width, height) {
+    var renderer_info;
+
+    function make_renderer(width_or_canvas, height) {
+        renderer_info = [width_or_canvas, height];
+
         var type = (window.location.hash ? 
                     window.location.hash.substring(1) :
                     'css');
@@ -37,7 +41,7 @@ $(function() {
             }
         });
 
-        init(width, height);
+        init(width_or_canvas, height);
         return dom3d.current_renderer();
     };
    
@@ -72,7 +76,7 @@ $(function() {
     }
 
     window.onpopstate = function() {
-        make_renderer(dom3d.current_width(), dom3d.current_height());
+        make_renderer.apply(this, renderer_info);
     }
 
     window.make_renderer = make_renderer;

@@ -32,11 +32,11 @@
     }
      
     function test(canvas) {
-        self.render2d(canvas,
+        this.render2d(canvas,
                       [$v(0, 0), $v(100, 100), $v(100, 0)],
                       $c(0, 255, 0));
 
-        self.render2d(canvas,
+        this.render2d(canvas,
                       [$v(50, 200), $v(50, 250), $v(100, 225)],
                       $c(0, 0, 255));
     }

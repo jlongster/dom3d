@@ -1,6 +1,6 @@
 
 $(function() {
-      
+
     function update(diff) {
         untitled2.yaw = diff;
         untitled2.pitch = diff;
@@ -14,24 +14,57 @@ $(function() {
     function test() {
         dom3d.current_renderer().test('canvas');
     }
-    
-    var canvas = $('#canvas');
-    make_renderer(canvas.width(), canvas.height());
 
-    dom3d.current_eye($v(0,0,-15));
+    function update_controls() {
+        if(dom3d.current_renderer().use_refs) {
+            $('#controls').show();
+        }
+        else {
+            $('#controls').hide();
+        }
+    }
+
+    function bind_controls() {
+        var c = $('#controls');
+        c.find('input[name=border]').click(function() {
+            if(this.checked) {
+                dom3d.current_renderer().use_refs();
+                setTimeout(function() {
+                    $('._dom3d').addClass('border');
+                }, 50);
+            }
+            else {
+                setTimeout(function() {
+                    $('._dom3d').removeClass('border');
+                }, 50);
+            }
+        });
+
+        c.find('input[name=off]').click(function() {
+            if(this.checked) {
+                dom3d.current_renderer().use_refs();
+                setTimeout(function() {
+                    $('._dom3d').addClass('off');
+                }, 50);
+
+                c.find('.off-code').show();
+            }
+            else {
+                setTimeout(function() {
+                    $('._dom3d').removeClass('off');
+                }, 50);
+                c.find('.off-code').hide();
+            }
+        });
+    }
+
+    make_renderer('canvas');
+
+    dom3d.current_eye($v(0,0,-20));
     dom3d.current_light(vec_unit($v(-1.0, 0.0, 0.0)));
     dom3d.current_color($c(200, 255, 200));
-    dom3d.current_frustum(
-        dom3d.make_frustum(90.0,
-                           dom3d.current_width() / dom3d.current_height(),
-                           1.0,
-                           1000.0)
-    );
     // dom3d.current_renderer().use_matrix();
     // dom3d.current_renderer().use_refs();
-
-    //test();
-    frame();   
 
     var rot = 0.0;
     setInterval(function() {
@@ -39,4 +72,13 @@ $(function() {
         rot += 0.05;
         frame();
     }, 50);
+
+    bind_controls();
+    update_controls();
+
+    var change_renderer = window.onpopstate;
+    window.onpopstate = function() {
+        change_renderer();
+        update_controls();
+    }
 });

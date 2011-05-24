@@ -1,0 +1,9 @@
+
+dom3d: 3d with pure HTML/CSS
+
+This code is still very much experimental. The API will certainly change quickly.
+
+dom3d.js is where the API is exposed and interfaces between the use and the renderer.
+renderer.js is where the base renderer is defined.
+renderer_css.js is the CSS renderer.
+renderer_raphael.js is the Raphael/SVG renderer.

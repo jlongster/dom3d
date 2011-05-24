@@ -19,43 +19,82 @@
   </head>
   <body id="main">
     <div class="header">
-      Other examples:
+      <div class="nav">
+        Other examples:
 
-      <a href="index.html">main</a>
-      <a href="example.html">pole</a>
-      <a href="example2.html">dragging</a>
-      <a href="example3.html">teapot</a>
-      <a href="example4.html">404</a>
+        <a href="index.html">main</a>
+        <a href="example.html">pole</a>
+        <a href="example2.html">dragging</a>
+        <a href="example3.html">teapot</a>
+        <a href="example4.html">404</a>
+      </div>
 
       <div class="render-options">
         <a href="#css">CSS</a>
         <a href="#raphael">SVG/Raphael</a>
+        <div>canvas/webgl coming soon</div>
       </div>
+
+      <div class="clear"></div>
     </div>
 
     <div class="content">
+      <h1>dom3d: 3d with pure HTML/CSS </h1>
+
+      <h3>
+        <a href="http://github.com/jlongster/dom3d">Fork me on github!</a>
+      </h3>
+
       <p>
-        Here is a 3d object. It is rendered with pure HTML and CSS3
+        Here is a 3d object. It is rendered with pure HTML and CSS
         using <a href="http://www.w3.org/TR/css3-2d-transforms/">2d
-          transforms</a>. This uses Firefox's custom property
-        <a href="https://developer.mozilla.org/en/CSS/-moz-transform">-moz-transform</a>
-        to beat the triangles into shape.
+        transforms</a>. These let you specify a <code>transform</code>
+        property on a DOM element composed
+        of <code>translate</code>, <code>rotate</code>, 
+        <code>skew</code>, and <code>scale</code> functions.
       </p>
 
       <p>
         To achieve the 3d effect, I project the 3d triangles into 2d
         screen space using javascript, and then calculate the necessary
-        -moz-transform value to display the 2d triangle.
+        <code>transform</code> value to display the 2d triangle.
         
       </p>
 
       <div id="canvas"></div>
+      <div id="controls">
+        CSS Effects:
+        <div><input type="checkbox" name="border"> Border</div>
+        <div><input type="checkbox" name="off"> Off</div>
+
+        <pre class="off-code">.off:nth-of-type(2n) {
+    top: 100px;
+    opacity: 0;
+    -moz-transition: all 2s;
+}</pre>
+      </div>
 
       <p>
         So without any SVG or canvas, you can have real-time 3d objects
         in modern browsers! What's the benefit? Well, you don't have to
         deal with a canvas, and you can click on links underneath
         it. Maybe this is just a cool hack, maybe not?
+      </p>
+
+      <h4>What's the point?</h4>
+
+      <p>
+        This is mainly just a cool hack, but I think there's use cases
+        for quick 3d effects on websites. There are a few benefits to this
+        approach: you get to manipulate the elements with normal CSS,
+        and you can overlay 3d objects onto pages and still let the
+        user interact with the page.
+      </p>
+
+      <p>
+        I'm interested to see what others think of this hack and see
+        how far it can go. I'd like to see this library turn into a
+        quick 3d effects library that supports HTML/CSS, SVG, canvas, and webgl.
       </p>
 
       <h4>How's it work?</h4>
@@ -72,14 +111,17 @@
       <p>
         Here's an example.
 
+        <pre>background-image: -moz-linear-gradient(-45deg, red 50%, transparent 0);</pre>
+
         <div class="example example1"></div>
         <div class="clear"></div>
       </p>
 
       <p>
-        It turns out that you can render any 2d
-        triangle with the right translate, rotate, skew, and scale
-        settings for the -moz-transform CSS property.
+        It turns out that you can render any 2d triangle with the
+        right <code>translate</code>, <code>rotate</code>, <code>skew</code>,
+        and <code>scale</code>
+        settings for the <code>transform</code> CSS property.
 
         <div class="example example2">-moz-transform: skew(30deg);</div>
         <div class="example example3">-moz-transform: rotate(50deg) skew(-30deg) scale(1.5, .7);</div>
@@ -100,6 +142,30 @@
           background: -moz-linear-gradient(45deg, rgb(87, 111, 121) 50%, transparent 0pt);
         </pre>
       </p>
+
+
+      <h4>Notes</h4>
+      
+      <p>
+        Obviously there are issues with seams. This is due to
+        anti-aliasing that is done on the edges. Different browsers
+        have slightly different effects.
+      </p>
+
+      <p>
+        In Firefox 4, there is also a glitch where if I re-use DOM
+        elements between frames, you can see the other edge of the DOM
+        elements briefly. The example above creates new DOM elements
+        per frame, but if you turn on any of the options to the right
+        it'll switch to re-using DOM nodes and you'll see the
+        effect. Firefox 6 (nightly) does not have this glitch.
+      </p>
+
+      <p>
+        Various browsers will have glitches with this hack, as it's
+        really a severe and gross hack. Or maybe just a good test case?
+      </p>
+
     </div>
   </body>
 </html>

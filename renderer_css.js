@@ -128,7 +128,7 @@
         points.ref = points.ref || make_ref(canvas, true);
 
         var el = points.ref;
-        el.style.display = 'block';
+        el.style.display = 'none';
         el.style.width = scale[X] + 'px';
         el.style.height = scale[Y] + 'px';
         el.style.MozTransform = transform;
@@ -137,8 +137,21 @@
         el.style.WebkitTransformOrigin = 'top left';
         el.style.background = get_background(color, -bg_angle);
         el.style.zIndex = zIndex;
+        el.style.display = 'block';
+        //apply_triangle(el, color, scale);
 
         zIndex++;
+    }
+
+    function apply_triangle(el, color, scale) {
+        var color = 'rgb(' + 
+            color[R].toFixed() + ',' +
+            color[G].toFixed() + ',' + 
+            color[B].toFixed() + ')';
+        
+        el.style.borderStyle = 'solid';
+        el.style.borderWidth = (scale[Y]/2.0) + 'px ' + (scale[X]/2.0) + 'px';
+        el.style.borderColor = color + ' transparent transparent ' + color;
     }
 
     var _chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;

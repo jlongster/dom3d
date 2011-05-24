@@ -34,6 +34,7 @@ body p {
 ._dom3d {
     position: absolute;
     top: 0;
+    opacity: 1;
     left: 0;
     width: 1px;
     height: 1px;
@@ -41,27 +42,51 @@ body p {
     background-position: bottom left;
     background-repeat: no-repeat;
     overflow: hidden;
+    -moz-transition-duration: 3s;
+    -moz-transition-property: top, opacity;
+    -webkit-transition-duration: 3s;
+    -webkit-transition-property: top, opacity;
+    /* border: 1px solid blue; */
+}
+
+._dom3d.border {
+    border: 1px solid red;
 }
 
 ._dom3d.off:nth-of-type(2n) {
     top: 100px;
     opacity: 0;
     -moz-transition: all 2s;
+    -webkit-transition: all 3s;
 }
 
 ._dom3d.off:nth-of-type(2n + 1) {
     top: -100px;
     opacity: 0;
     -moz-transition: all 3s;
+    -webkit-transition: all 3s;
 }
 
+.off-code {
+    display: none;
+}
 
 #main #canvas {
     position: fixed;
     top: 100px;
     right: 0;
-    width: 800px;
-    height: 400px;
+    width: 600px;
+    height: 300px;
+}
+
+#main #controls {
+    position: fixed;
+    top: 500px;
+    width: 300px;
+    right: 0;
+    padding: 1em;
+    background-color: #361a11;
+    color: white;
 }
 
 #canvas2 {
@@ -95,6 +120,10 @@ body p {
 
 .example2 {
     -moz-transform: skew(30deg);
+
+    -moz-transform: matrix(3,4,2,3,3,4);
+    -moz-transform: matrix3d(3,4,2,3,3,4,3,5,3);
+
     -webkit-transform: skew(30deg);
 }
 
@@ -105,8 +134,28 @@ body p {
     -webkit-transform-origin: bottom left;
 }
 
+.example4 {
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 75px 75px;
+    border-color: red transparent transparent red;
+    margin: 15em;
+    padding: 0;
+    font-size: 0;
+    /* background-image: */
+
+    /*    -moz-linear-gradient(-45deg, red 50%, transparent 0); */
+    -moz-transform: rotate(.2rad);
+    -moz-transform-origin: top left;
+}
+
 .last {
     margin-top: 5em;
+}
+
+.nav {
+    float: left;
 }
 
 .render-options {
@@ -124,4 +173,13 @@ body p {
 
 .render-options a.selected {
     background-color: #bd5294;
+}
+
+.render-options div {
+    display: inline-block;
+    font-style: italic;
+    font-size: .75em;
+    width: 7em;
+    margin-left: 1em;
+    vertical-align: bottom;
 }
