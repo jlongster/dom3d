@@ -57,7 +57,7 @@
 
             heap_add(heap, tri);
         }
-        
+
         heap_depth_first(heap, function(triangle) {
             renderer.render3d(canvas, 
                               triangle,

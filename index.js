@@ -88,7 +88,9 @@ $(function() {
     // dom3d.current_renderer().use_matrix();
     // dom3d.current_renderer().use_refs();
 
+    //frame();
     timer = start_loop();
+    //test();
 
     bind_controls();
     update_controls();

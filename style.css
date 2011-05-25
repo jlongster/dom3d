@@ -119,7 +119,13 @@ body p {
     background-image:
        -moz-linear-gradient(-45deg, red 50%, transparent 0);
     background-image:
-       -webkit-linear-gradient(-45deg, red 50%, transparent 0);
+       -webkit-gradient(linear, 
+                        0 0,
+                        50 50,
+                        from(red), 
+                        color-stop(.5, red), 
+                        color-stop(.5, transparent), 
+                        to(transparent))
 }
 
 .example2 {

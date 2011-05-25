@@ -10,11 +10,19 @@ var B = 2;
 var A = 3;
 
 function $v(x, y, z, w) {
+    var arr;
     var len = (w != undefined ? 4 :
                (z != undefined ? 3 :
                 (y != undefined ? 2 : 1)));
-    var buffer = new ArrayBuffer(4*len);
-    var arr = new Float32Array(buffer);
+
+    if("ArrayBuffer" in window) {
+        var buffer = new ArrayBuffer(4*len);
+        arr = new Float32Array(buffer);
+    }
+    else {
+        arr = [];
+    }
+
     arr[X] = x;
     len >= 2 && (arr[Y] = y);
     len >= 3 && (arr[Z] = z);
@@ -37,7 +45,7 @@ function vec_equals(v1, v2) {
 }
 
 function vec_copy(v1) {
-    if(v1 instanceof Float32Array) {
+    if("Float32Array" in window && v1 instanceof Float32Array) {
         var buffer = new ArrayBuffer(4*v1.length);
         var arr = new Float32Array(buffer);
         arr[X] = v1[X];
@@ -193,8 +201,7 @@ function assert(msg, exp) {
 
 function assert_equal(msg, v1, v2) {
     if(typeof(v1) == "object") {
-        assert(msg + ' ' + v1.toSource() + ' ' + v2.toSource(),
-               vec_equals(v1, v2));
+        assert(msg + ' ' + v1 + ' ' + v2, vec_equals(v1, v2));
     }
     else {
         assert(msg + ' ' + v1 + ' ' + v2, v1 == v2);

@@ -31,7 +31,7 @@
 
     function make_ref(canvas, force) {
         if(_use_refs || force) {
-            var node = document.createElement('div'); 
+            var node = document.createElement('div');
             node.className = '_dom3d';
             document.getElementById(canvas).appendChild(node);
             return node;
@@ -121,8 +121,6 @@
                 'skewY(' + e(skew) + 'rad) ';
         }
          
-        var bg_angle = Math.atan2(scale[X], scale[Y]);
-
         // Create a node if we don't have one yet, which would be if
         // these points didn't come from projected 3d points
         points.ref = points.ref || make_ref(canvas, true);
@@ -135,7 +133,7 @@
         el.style.MozTransformOrigin = 'top left';
         el.style.WebkitTransform = transform;
         el.style.WebkitTransformOrigin = 'top left';
-        el.style.background = get_background(color, -bg_angle);
+        el.style.background = get_background(color, scale);
         el.style.zIndex = zIndex;
         el.style.display = 'block';
         //apply_triangle(el, color, scale);
@@ -154,17 +152,40 @@
         el.style.borderColor = color + ' transparent transparent ' + color;
     }
 
+    var _webkit = navigator.userAgent.toLowerCase().indexOf('webkit') > -1;
     var _chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-    function get_background(color, angle) {
+
+    function get_background(color, scale) {
         var color = 'rgb(' + 
             color[R].toFixed() + ',' +
             color[G].toFixed() + ',' + 
             color[B].toFixed() + ')';
-        
+
         if(_chrome) {
+            var angle = -Math.atan2(scale[X], scale[Y]);
             return '-webkit-linear-gradient(' + e(angle) + 'rad, ' + color + ' 50%, transparent 0)';
         }
+        else if(_webkit) {
+            // hack: safari only supports webkit-gradient, so we have
+            // to calculate the start/stop points
+            var end = $v(scale[X], -scale[Y]);
+            _vec_2drotate(end, Math.PI/2);
+
+            var start = $v(-(end[X] - scale[X]) / 2.0,
+                           (scale[Y] - end[Y]) / 2.0);
+
+            _vec_add(end, start);
+            
+            return '-webkit-gradient(linear, ' +
+                Math.floor(start[X]) + ' ' + Math.floor(start[Y]) + ', ' +
+                Math.floor(end[X]) + ' ' + Math.floor(end[Y]) + ', ' +
+                'from(' + color + '), ' +
+                'color-stop(.5, ' + color + '), ' +
+                'color-stop(.5, transparent), ' +
+                'to(transparent))';
+        }
         else {
+            var angle = -Math.atan2(scale[X], scale[Y]);
             return '-moz-linear-gradient(' + e(angle) + 'rad, ' + color + ' 50%, transparent 0)';
         }
     }
