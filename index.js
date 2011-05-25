@@ -80,7 +80,7 @@ $(function() {
         }, 50);
     }
 
-    make_renderer('canvas');
+    make_renderer(null, 'canvas');
 
     dom3d.current_eye($v(0,0,-20));
     dom3d.current_light(vec_unit($v(-1.0, 0.0, 0.0)));
@@ -95,9 +95,5 @@ $(function() {
     bind_controls();
     update_controls();
 
-    var change_renderer = window.onpopstate;
-    window.onpopstate = function() {
-        change_renderer();
-        update_controls();
-    }
+    $('.render-options a').click(update_controls);
 });

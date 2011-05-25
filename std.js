@@ -15,12 +15,15 @@ $(function() {
 
     var renderer_info;
 
-    function make_renderer(width_or_canvas, height) {
-        renderer_info = [width_or_canvas, height];
+    function default_renderer_type() {
+        var hash = window.location.hash;
+        type = hash && hash.substring(1);        
+        return type || 'css';
+    }
 
-        var type = (window.location.hash ? 
-                    window.location.hash.substring(1) :
-                    'css');
+    function make_renderer(type, width_or_canvas, height) {
+        renderer_info = [width_or_canvas, height];
+        type = type || default_renderer_type();
         
         if(dom3d.current_renderer()) {
             dom3d.clear('canvas');
@@ -33,13 +36,6 @@ $(function() {
         else {
             dom3d.current_renderer(new RendererCSS());
         }
-
-        $('.render-options a').each(function() {
-            var _this = $(this);
-            if(_this.attr('href') == '#' + type) {
-                _this.addClass('selected');
-            }
-        });
 
         init(width_or_canvas, height);
         return dom3d.current_renderer();
@@ -67,16 +63,22 @@ $(function() {
     $('.render-options a').click(function() {
         $('.render-options a').removeClass('selected');
         $(this).addClass('selected');
+
+        var pound = this.href.indexOf('#');
+        make_renderer(this.href.substring(pound + 1),
+                      renderer_info[0],
+                      renderer_info[1]);
     });
 
+    $('.render-options a').each(function() {
+        if(this.href.indexOf(default_renderer_type()) > 0)
+            $(this).addClass('selected');
+    });
+    
     function install_resize() {
         $(window).resize(function() {
             init();
         });
-    }
-
-    window.onpopstate = function() {
-        make_renderer.apply(this, renderer_info);
     }
 
     window.make_renderer = make_renderer;
