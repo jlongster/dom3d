@@ -46,7 +46,8 @@ body p {
     -moz-transition-property: top, opacity;
     -webkit-transition-duration: 3s;
     -webkit-transition-property: top, opacity;
-    /* border: 1px solid blue; */
+    -o-transition-duration: 3s;
+    -o-transition-property: top, opacity;
 }
 
 ._dom3d.border {
@@ -60,6 +61,8 @@ body p {
     -moz-transition-property: top, opacity;
     -webkit-transition-duration: 3s;
     -webkit-transition-property: top, opacity;
+    -o-transition-duration: 3s;
+    -o-transition-property: top, opacity;
 }
 
 ._dom3d.off:nth-of-type(2n + 1) {
@@ -69,6 +72,8 @@ body p {
     -moz-transition-property: top, opacity;
     -webkit-transition-duration: 3s;
     -webkit-transition-property: top, opacity;
+    -o-transition-duration: 3s;
+    -o-transition-property: top, opacity;
 }
 
 .off-code {
@@ -117,6 +122,8 @@ body p {
     width: 50px;
     height: 50px;
     background-image:
+       -o-linear-gradient(-45deg, red 50%, transparent 0);
+    background-image:
        -moz-linear-gradient(-45deg, red 50%, transparent 0);
     background-image:
        -webkit-gradient(linear, 
@@ -130,11 +137,8 @@ body p {
 
 .example2 {
     -moz-transform: skew(30deg);
-
-    -moz-transform: matrix(3,4,2,3,3,4);
-    -moz-transform: matrix3d(3,4,2,3,3,4,3,5,3);
-
     -webkit-transform: skew(30deg);
+    -o-transform: skew(30deg);
 }
 
 .example3 {
@@ -142,6 +146,8 @@ body p {
     -moz-transform-origin: bottom left;
     -webkit-transform: rotate(.78rad);
     -webkit-transform-origin: bottom left;
+    -o-transform: rotate(.78rad);
+    -o-transform-origin: bottom left;
 }
 
 .example4 {

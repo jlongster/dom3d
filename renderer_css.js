@@ -133,27 +133,18 @@
         el.style.MozTransformOrigin = 'top left';
         el.style.WebkitTransform = transform;
         el.style.WebkitTransformOrigin = 'top left';
+        el.style.OTransform = transform;
+        el.style.OTransformOrigin = 'top left';
         el.style.background = get_background(color, scale);
         el.style.zIndex = zIndex;
         el.style.display = 'block';
-        //apply_triangle(el, color, scale);
 
         zIndex++;
     }
 
-    function apply_triangle(el, color, scale) {
-        var color = 'rgb(' + 
-            color[R].toFixed() + ',' +
-            color[G].toFixed() + ',' + 
-            color[B].toFixed() + ')';
-        
-        el.style.borderStyle = 'solid';
-        el.style.borderWidth = (scale[Y]/2.0) + 'px ' + (scale[X]/2.0) + 'px';
-        el.style.borderColor = color + ' transparent transparent ' + color;
-    }
-
     var _webkit = navigator.userAgent.toLowerCase().indexOf('webkit') > -1;
     var _chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+    var _opera = navigator.userAgent.toLowerCase().indexOf('opera') > -1;
 
     function get_background(color, scale) {
         var color = 'rgb(' + 
@@ -183,6 +174,10 @@
                 'color-stop(.5, ' + color + '), ' +
                 'color-stop(.5, transparent), ' +
                 'to(transparent))';
+        }
+        else if(_opera) {
+            var angle = -Math.atan2(scale[X], scale[Y]);
+            return '-o-linear-gradient(' + e(angle) + 'rad, ' + color + ' 50%, transparent 0)';
         }
         else {
             var angle = -Math.atan2(scale[X], scale[Y]);
