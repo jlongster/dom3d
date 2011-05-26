@@ -88,12 +88,25 @@ $(function() {
     // dom3d.current_renderer().use_matrix();
     // dom3d.current_renderer().use_refs();
 
-    //frame();
     timer = start_loop();
     //test();
 
     bind_controls();
     update_controls();
+
+    var canvas = $('#canvas')
+    $(window).mousemove(function(e) {
+        var pos = canvas.offset();
+        var screen = $v(e.pageX - pos.left, e.pageY - pos.top);
+        var target = dom3d.current_renderer().project3d(
+            screen,
+            -dom3d.current_eye()[Z] - 5.0,
+            dom3d.current_frustum()
+        );
+
+        target[Z] += dom3d.current_eye()[Z];
+        dom3d.current_light(vec_unit(target));
+    });
 
     $('.render-options a').click(update_controls);
 });
