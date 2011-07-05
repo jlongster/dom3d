@@ -28,8 +28,8 @@ $(function() {
     var canvas = $('#canvas, svg');
     $(window).mousemove(function(e) {
         canvas.css({ 'position': 'absolute',
-                     'left': e.pageX - 50.0,
-                     'top': e.pageY - 50.0 });
+                     'left': e.pageX - 30.0,
+                     'top': e.pageY - 25.0 });
     });
 
     $('a').hover(
