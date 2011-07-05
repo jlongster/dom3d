@@ -81,10 +81,10 @@
         var ac = vec_subtract(points[2], points[0]);
 
         var translate = points[0];
-        var rotate = Math.atan2(ab[X], ab[Y]);
+        var rotate = -Math.atan2(ab[X], ab[Y]);
 
         // rotate ac to get it in local coords
-        var ac_ = vec_2drotate(ac, rotate);
+        var ac_ = vec_2drotate(ac, -rotate);
 
         // scale to the right size
         var scale = $v(ac_[X], vec_length(ab));
@@ -96,8 +96,8 @@
         var transform;
 
         if(_use_matrix) {
-            var cos_a = Math.cos(rotate);
-            var sin_a = Math.sin(rotate);
+            var cos_a = Math.cos(-rotate);
+            var sin_a = Math.sin(-rotate);
             var rotate_m = $m([cos_a, -sin_a],
                               [sin_a, cos_a]);
             var skew_m = $m([1, Math.tan(skew)],
@@ -117,7 +117,7 @@
             transform = 
                 'translate(' + translate[X] + 'px,' + 
                                translate[Y] + 'px) ' +
-                'rotate(' + -e(rotate) + 'rad) ' +
+                'rotate(' + e(rotate) + 'rad) ' +
                 'skewY(' + e(skew) + 'rad) ';
         }
          

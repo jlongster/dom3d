@@ -12,13 +12,18 @@
 
     <script type="text/javascript" src="heap.js"></script>
     <script type="text/javascript" src="std.js"></script>
-    <script type="text/javascript" src="example4.js"></script>
-    <script type="text/javascript" src="mesh404.js"></script>
+    <script type="text/javascript" src="test.js"></script>
 
     <link rel="stylesheet" href="style.css" type="text/css" />
     <link rel="stylesheet" href="example.css" type="text/css" />
+
+    <style>
+      #canvas {
+      position: relative;
+      }
+    </style>
   </head>
-  <body id="canvas">
+  <body>
     <div class="header">
       <div class="nav">
         Other examples:
@@ -31,14 +36,11 @@
         <a href="cursor.html">cursor</a>
       </div>
 
-      <div class="render-options">
-        <a href="#css">CSS</a>
-        <a href="#raphael">SVG/Raphael</a>
-        <div>canvas/webgl coming soon</div>
-      </div>
-
       <div class="clear"></div>
     </div>
+
+    <div id="canvas"></div>
+
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
