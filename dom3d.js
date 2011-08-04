@@ -50,6 +50,7 @@
 
             var tri = _transform_points(mesh, data[i]);
             tri.ref = data[i].ref;
+            tri.color = data[i].color;
 
             _tri_apply(tri, function(v) {
                 _vec_subtract(v, eye);
